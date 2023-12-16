@@ -1,0 +1,21 @@
+﻿@model WebAtividadeEntrevista.Models.BeneficiarioModel
+@using HtmlHelpers.BeginCollectionItem;
+
+<tr>
+    @using (Html.BeginCollectionItem("ListaBeneficiario"))
+    {
+        @Html.HiddenFor(model => Model.Nome, Model.Nome)
+        @Html.HiddenFor(model => Model.CPF, Model.CPF)
+
+        <td class="cpf">
+            @Model.CPF
+        </td>
+        <td class="nome">
+            @Model.Nome
+        </td>
+        <td>
+            <button class="btn btn-primary alterarLinha">Alterar</button>
+            <button class="btn btn-primary deletarLinha">Excluir</button>
+        </td>
+    }
+</tr>

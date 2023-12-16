@@ -1,0 +1,99 @@
+﻿@model WebAtividadeEntrevista.Models.ClienteModel
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { id = "formCadastroBeneficiario" }))
+{
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">
+            Beneficiários
+        </h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="CPF">CPF:</label>
+                    <input required="required" type="text" class="form-control campoCPF" id="CPFB" name="CPF" placeholder="Ex.: 010.011.111-00" maxlength="14">
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="Nome">Nome:</label>
+                    <input required="required" type="text" class="form-control" id="NomeB" name="Nome" placeholder="Ex.: João da Silva" maxlength="50">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-success botao-incluir" id="adicionarBeneficiado">Incluir</button>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>CPF</th>
+                        <th>Nome</th>
+                    </tr>
+                </thead>
+                <tbody id="new-Beneficiado">
+                    @if (Model != null && Model.ListaBeneficiario != null && Model.ListaBeneficiario.Count() > 0)
+                    {
+                        foreach (var item in Model.ListaBeneficiario)
+                        {
+                            @Html.Partial("_ListaBeneficiado", item)
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal">Fechar</button>
+    </div>
+}
+
+<script type="text/javascript">
+    $(".campoCPF").mask("999.999.999-99");
+
+    $('#formCadastroBeneficiario').submit(function (e) {
+        debugger;
+        e.preventDefault();
+        $.ajax({
+            async: false,
+            url: '@Url.Action("IncluirBeneficiario", "Cliente")',
+            method: "POST",
+            data: {
+                "NOME": $(this).find("#NomeB").val(),
+                "CPF": $(this).find("#CPFB").val(),
+            },
+            error:
+            function (r) {
+                if (r.status == 400)
+                    alert(r.responseJSON);
+                else if (r.status == 500)
+                    alert("Ocorreu um erro interno no servidor.");
+            },
+            success:
+                function (r) {
+                    $("#new-Beneficiado").append(r);
+                    $("#NomeB").val("");
+                    $("#CPFB").val("");
+                }
+        });
+
+        $(".deletarLinha").click(function (e) {
+            //debugger;
+            $(this).closest("tr").remove();
+        });
+
+        $(".alterarLinha").click(function (e) {
+            //debugger;
+            $('#NomeB').val($(this).closest("td").prev().html().trim());
+            $('#CPFB').val($(this).closest("td").prev().prev().html().trim());
+            $(this).closest("tr").remove();
+        });
+    });
+
+</script>
